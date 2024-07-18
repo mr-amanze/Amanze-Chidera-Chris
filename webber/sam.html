@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Adventure Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #game { display: grid; grid-template-columns: repeat(5, 40px); grid-gap: 5px; }
+        .cell { width: 40px; height: 40px; text-align: center; line-height: 40px; border: 1px solid #000; }
+        .player { background-color: blue; color: white; }
+        .treasure { background-color: gold; }
+        .obstacle { background-color: black; }
+    </style>
+</head>
+<body>
+    <h1>Maze Adventure Game</h1>
+    <div id="game">
+
+
+
+    </div>
+    <p id="message">
+
+        I Love this Game
+    </p>
+
+    <script>
+        const size = 5; // size of the grid
+        const player = { x: 0, y: 0 };
+        const treasure = { x: size - 1, y: size - 1 };
+        const obstacles = [
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+            { x: 3, y: 3 },
+        ];
+
+        const gameDiv = document.getElementById('game');
+        const messageDiv = document.getElementById('message');
+
+        function createGrid() {
+            gameDiv.innerHTML = '';
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if (x === player.x && y === player.y) {
+                        cell.classList.add('player');
+                        cell.innerText = 'P';
+                    } else if (x === treasure.x && y === treasure.y) {
+                        cell.classList.add('treasure');
+                        cell.innerText = 'T';
+                    } else if (obstacles.some(ob => ob.x === x && ob.y === y)) {
+                        cell.classList.add('obstacle');
+                    }
+                    gameDiv.appendChild(cell);
+                }
+            }
+        }
+
+        function movePlayer(dx, dy) {
+            const newX = player.x + dx;
+            const newY = player.y + dy;
+
+            if (newX >= 0 && newX < size && newY >= 0 && newY < size) {
+                if (!obstacles.some(ob => ob.x === newX && ob.y === newY)) {
+                    player.x = newX;
+                    player.y = newY;
+                    if (player.x === treasure.x && player.y === treasure.y) {
+                        messageDiv.innerText = 'You found the treasure! You win!';
+                    } else {
+                        messageDiv.innerText = '';
+                    }
+                } else {
+                    messageDiv.innerText = 'You hit an obstacle!';
+                }
+            } else {
+                messageDiv.innerText = 'Out of bounds!';
+            }
+
+            createGrid();
+        }
+
+        window.addEventListener('keydown', (event) => {
+            switch (event.key) {
+                case 'ArrowUp':
+                    movePlayer(0, -1);
+                    break;
+                case 'ArrowDown':
+                    movePlayer(0, 1);
+                    break;
+                case 'ArrowLeft':
+                    movePlayer(-1, 0);
+                    break;
+                case 'ArrowRight':
+                    movePlayer(1, 0);
+                    break;
+            }
+        });
+
+        createGrid();
+    </script>
+</body>
+</html>
